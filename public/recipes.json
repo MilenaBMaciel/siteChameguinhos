@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "name": "Receita 1",
+    "description": "Deliciosa receita de crochê.",
+    "imageUrl": "/images/receita1.jpeg",
+    "link": "/recipe/1",
+    "pdfUrl": "/pdfs/receita1.pdf",
+    "price": 25.50,
+    "category": "Roupas"
+  },
+  {
+    "id": 2,
+    "name": "Receita 2",
+    "description": "Crochê para iniciantes.",
+    "imageUrl": "/images/receita2.jpeg",
+    "link": "/recipe/2",
+    "pdfUrl": "/pdfs/receita1.pdf",
+    "price": 30.00,
+    "category": "Decoração"
+  },
+  {
+    "id": 3,
+    "name": "Receita 3",
+    "description": "Crochê para iniciantes.",
+    "imageUrl": "/images/receita3.jpeg",
+    "link": "/recipe/3",
+    "pdfUrl": "/pdfs/receita1.pdf",
+    "price": 30.00,
+    "category": "Amigurumi"
+  }
+]

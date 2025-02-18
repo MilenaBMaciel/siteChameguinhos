@@ -1,0 +1,995 @@
+a {
+  text-decoration: none; /* Remove o sublinhado de todos os links */
+}
+
+body {
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji; /* Aplica a fonte em todo o corpo do site */
+  background-color: #f4ffe6; 
+}
+
+.nav-header {
+  border-bottom: 1px solid #ddd;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background-color: #e1ffba;
+}
+
+.nav-container {
+  display: flex;
+  justify-content: space-between; /* Espaça logo e ícones */
+  align-items: center;
+  max-width: 1200px;
+  margin: auto;
+  padding: 16px;
+}
+
+.nav-logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  cursor: pointer;
+  flex-grow: 1; /* Garante que o logo ocupe todo o espaço disponível */
+}
+
+.nav-logo img {
+  height: 80px;
+  width: 260px;
+  margin-right: 8px;
+  object-fit: contain;
+}
+
+.nav-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+}
+
+.profile-icon,
+.cart-icon {
+  font-size: 1.5rem;
+  color: #ed5565;
+  margin-left: 20px; /* Espaçamento entre os ícones */
+  transition: transform 0.2s ease-in-out;
+  position: relative;
+}
+.cart-icon:hover, .profile-icon:hover {
+  transform: scale(1.10); /* Adiciona animação de aumento de tamanho */
+}
+
+.cart-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: yellow;
+  color: black;
+  font-size: 0.75rem;
+  font-weight: bold;
+  padding: 4px 8px;
+  border-radius: 50%;
+  transform: translate(50%, -50%);
+}
+
+
+.homepage-title {
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+  color: #ed5565;
+  margin-top: 20px;
+}
+.homepage-descrip {
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+  color: #eb4e5f;
+  margin-top: 20px;
+}
+
+.recipe-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Colunas responsivas */
+  gap: 20px; /* Espaçamento entre os itens */
+  padding: 20px; /* Padding para a área ao redor */
+}
+.recipe-card {
+  flex-direction: column; /* Coloca os itens verticalmente */
+  justify-content: space-between; /* Espalha o conteúdo de maneira balanceada */
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.2s ease-in-out;
+  height: 100%; /* Faz o card ocupar toda a altura disponível */
+  position: relative;
+  background-color: #fafff2;
+}
+.recipe-card:hover {
+  transform: scale(1.05); /* Adiciona animação de aumento de tamanho */
+}
+.recipe-image {
+  width: 100%;
+  height: 300px; /* Define uma altura fixa para a imagem */
+  object-fit: cover; /* Garante que a imagem não fique distorcida */
+}
+
+.product-info {
+  display: flex;
+  flex-direction: column; /* Organiza as informações em coluna */
+  justify-content: center; /* Centraliza as informações verticalmente */
+  align-items: center; /* Centraliza as informações horizontalmente */
+  padding: 10px;
+  text-align: center;
+  flex-grow: 1; /* Faz com que o conteúdo ocupe o máximo de espaço disponível */
+}
+
+.product-name {
+  margin-top: 2px;
+  font-size: 1.3rem;
+  color: #ed5565;
+  font-weight: bold;
+}
+
+.product-category {
+  margin-top: 2px;
+  font-size: 1rem;
+  color: #666;
+}
+
+.product-price {
+  margin-top: 1px;
+  font-weight: bold;
+  font-size: 1.2rem;
+  color: #6dab1b;
+}
+
+.homePagecategory-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.homePagecategory-buttons button {
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 1px 1px 2px #a7c87c;
+  color: #ed5565;
+  background-color: #fdf0f1;
+}
+
+.homePagecategory-buttons button:hover {
+  transform: scale(1.05);
+}
+
+.cart-container {
+  padding: 20px;
+  background-color: #f9f9f9;
+}
+
+.cart-item {
+  display: flex;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+}
+
+.cart-item-image {
+  width: 100px;
+  height: auto;
+  margin-right: 20px;
+}
+
+.cart-item-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.cart-item-info h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #333;
+}
+
+.cart-item-info p {
+  margin: 5px 0;
+}
+
+.cart-total {
+  margin-top: 20px;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+/* Estilos gerais para a RecipePage */
+.recipePage-page {
+  min-height: 100vh;
+  padding: 40px 20px;
+}
+
+.recipePage-container {
+  max-width: 800px;
+  margin: 0 auto;
+  background-color: #fafff2;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.recipePage-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  text-align: center;
+  color: #ed5565; 
+  margin-bottom: 20px;
+}
+
+.recipePage-image {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin-top: 20px;
+}
+
+.recipePage-category {
+  font-size: 1rem;
+  color: #718096; /* Cor de texto mais claro */
+  margin-top: 10px;
+}
+
+.recipePage-price {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #38a169; /* Cor verde para destacar o preço */
+  margin-top: 20px;
+}
+
+.loading {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #4a5568;
+}
+/* Estilos para o botão de compra */
+.buy-button {
+  background-color: #38a169; /* Cor verde */
+  color: white;
+  font-size: 1.1rem;
+  font-weight: bold;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: background-color 0.3s ease;
+}
+
+.buy-button:hover {
+  background-color: #2f855a; /* Cor verde mais escura ao passar o mouse */
+}
+
+/* Pop-up Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);  /* Cor de fundo semi-transparente */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;  /* Garante que o modal fique sobreposto a outros conteúdos */
+}
+
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+}
+
+.modal-content h2 {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.modal-content p {
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+.close-button {
+  background-color: #ed5565;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.close-button:hover {
+  background-color: #d84c53;  /* Altera a cor ao passar o mouse */
+}
+
+.buy-button {
+  background-color: #2ecc71;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.buy-button:hover {
+  background-color: #27ae60;  /* Altera a cor ao passar o mouse */
+}
+
+/* Login Page */
+/* Container principal */
+.loginPage-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f4ffe6; /* Cor de fundo do site */
+}
+
+/* Wrapper da página */
+.loginPage-wrapper {
+  max-width: 400px;
+  width: 100%;
+  padding: 20px;
+}
+
+/* Caixa do login */
+.loginPage-box {
+  background: #fafff2;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+/* Título */
+.loginPage-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #ed5565; /* Vermelho principal do site */
+}
+
+/* Botões sociais */
+.loginPage-socialLogin {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.loginPage-socialButton {
+  background: #fdf0f1;
+  border: none;
+  padding: 10px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.3s;
+  box-shadow: 1px 1px 2px #a7c87c;
+  color: #ed5565;
+}
+
+.loginPage-socialButton:hover {
+  background: #fce3e4;
+}
+
+/* Texto de separação */
+.loginPage-orText {
+  margin: 15px 0;
+  font-size: 14px;
+  color: gray;
+}
+
+/* Formulário */
+.loginPage-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Campos de entrada */
+.loginPage-input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+/* Opções de login */
+.loginPage-options {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  margin-bottom: 15px;
+}
+
+.loginPage-forgotPassword {
+  color: #ed5565; /* Link vermelho para combinar com o tema */
+  text-decoration: none;
+}
+
+.loginPage-forgotPassword:hover {
+  text-decoration: underline;
+}
+
+/* Botão de login */
+.loginPage-button {
+  width: 100%;
+  background: #6dab1b; /* Verde principal do site */
+  color: white;
+  padding: 10px;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: 0.3s;
+  box-shadow: 1px 1px 2px #a7c87c;
+}
+
+.loginPage-button:hover {
+  background: #5a9617; 
+}
+
+/* Mensagem de sucesso */
+.loginPage-success {
+  margin-top: 15px;
+  color: #6dab1b; 
+  font-size: 14px;
+}
+
+/* Estilização do modal de erro */
+.loginPage-modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.loginPage-modalContent {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.loginPage-closeButton {
+  background: #ed5565;
+  color: white;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.loginPage-closeButton:hover {
+  background: #d84c53;
+}
+
+/* Link para criar uma nova conta */
+.loginPage-registerText {
+  margin-top: 20px;
+  font-size: 14px;
+  color: black;
+}
+
+.loginPage-registerLink {
+  color: #ed5565; 
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.loginPage-registerLink:hover {
+  text-decoration: underline;
+}
+
+
+
+/* Profile Page */
+/* Estilo para a página de perfil, seguindo a identidade visual do site */
+.profilePage-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f4ffe6; /* Cor de fundo igual à HomePage */
+}
+
+/* Estrutura interna */
+.profilePage-wrapper {
+  max-width: 600px;
+  width: 100%;
+  padding: 20px;
+  text-align: center;
+  background: #fafff2;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Título */
+.profilePage-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #ed5565;
+}
+
+/* Botões de ação */
+.profilePage-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.profilePage-button {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 1px 1px 2px #a7c87c;
+}
+
+.profilePage-button.logout {
+  background: #ed5565; /* Cor do botão de logout */
+  color: white;
+}
+
+.profilePage-button.logout:hover {
+  background: #d84c53;
+}
+
+.profilePage-button.vendas {
+  background: #6dab1b; /* Verde para incentivar venda */
+  color: white;
+}
+
+.profilePage-button.vendas:hover {
+  background: #5a9617;
+}
+
+.profilePage-subtitle {
+  font-size: 20px;
+  font-weight: bold;
+  color: #ed5565;
+  margin-bottom: 15px;
+}
+
+.profilePage-recipes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: center;
+}
+
+/* Card de receita agora é um link */
+.profilePage-recipeCard {
+  width: 150px;
+  background: white;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.2s ease-in-out;
+}
+
+.profilePage-recipeCard:hover {
+  transform: scale(1.05); 
+}
+
+.profilePage-recipeImage {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 5px;
+}
+
+.profilePage-recipeName {
+  font-size: 16px;
+  margin: 10px 0;
+  color: #ed5565;
+}
+
+.profilePage-noRecipes {
+  font-size: 16px;
+  color: #666;
+}
+
+
+/* Colocar Receita a Venda*/
+/* Ajusta a largura do select para ser igual aos inputs */
+sellPage-input, .sellPage-textarea, .sellPage-button, .sellPage-select {
+  width: 100% !important;  /* Garante que todos os campos tenham o mesmo tamanho */
+  max-width: 100%;  /* Impede que o select fique menor que os inputs */
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+  background-color: white;
+  font-family: inherit;
+}
+
+.sellPage-select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  cursor: pointer;
+  text-align: left;
+  height: 44px; 
+  display: block;
+}
+
+
+.sellPage-select option {
+  font-size: 16px;
+}
+
+.sellPage-container, .fullRecipePage-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f4ffe6; 
+}
+
+.sellPage-wrapper, .fullRecipePage-content {
+  max-width: 500px;
+  padding: 30px;
+  text-align: center;
+  background: #fafff2;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.sellPage-title, .fullRecipePage-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #ed5565; 
+}
+
+.sellPage-input, .sellPage-textarea, .sellPage-button {
+  width: 96%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.sellPage-textarea {
+  height: 80px;
+  resize: none;
+}
+
+.sellPage-button {
+  background: #6dab1b; /* Verde principal do site */
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background 0.3s ease-in-out;
+  box-shadow: 1px 1px 2px #a7c87c;
+}
+
+.sellPage-button:hover {
+  background: #5a9617;
+}
+
+.fullRecipePage-content {
+  text-align: center;
+}
+
+.fullRecipePage-image {
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+}
+
+.fullRecipePage-button {
+  background: #ed5565;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  text-decoration: none;
+  font-size: 16px;
+}
+
+.fullRecipePage-button:hover {
+  background: #d84c53;
+}
+
+.sellPage-button.cancel {
+  background: #ed5565; /* Vermelho */
+  color: white;
+}
+
+.sellPage-button.cancel:hover {
+  background: #d84c53;
+}
+.loading {
+  text-align: center;
+  font-size: 16px;
+  color: #666;
+}
+
+/*Pagina Minhas Receitas*/
+/* Estilos para MyRecipes e EditRecipe */
+.myRecipes-container, .editRecipe-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f4ffe6; /* Cor de fundo igual à HomePage */
+}
+
+/* Caixa de conteúdo */
+.myRecipes-wrapper, .editRecipe-wrapper {
+  max-width: 600px;
+  padding: 30px;
+  text-align: center;
+  background: #fafff2; /* Cor de fundo igual ao formulário de venda */
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Títulos */
+.myRecipes-title, .editRecipe-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #ed5565;
+  margin-bottom: 20px;
+}
+
+/* Botão principal */
+.myRecipes-button {
+  width: 100%;
+  padding: 10px;
+  background: #6dab1b; /* Verde do tema */
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 1px 1px 2px #a7c87c;
+}
+
+.myRecipes-button:hover {
+  background: #5a9617;
+}
+
+/* Botão de cancelar */
+.myRecipes-button.cancel {
+  background: #ed5565; /* Vermelho */
+}
+
+.myRecipes-button.cancel:hover {
+  background: #d84c53;
+}
+
+/* Lista de receitas */
+.myRecipes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+/* Estilização dos cards */
+.myRecipes-card {
+  background: white;
+  padding: 15px;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Imagem dentro do card */
+.myRecipes-image {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 5px;
+}
+
+/* Nome da receita */
+.myRecipes-name {
+  font-size: 18px;
+  font-weight: bold;
+  color: #ed5565;
+  margin: 10px 0;
+}
+
+/* Categoria */
+.myRecipes-category {
+  font-size: 14px;
+  color: #666;
+}
+
+/* Preço */
+.myRecipes-price {
+  font-size: 16px;
+  font-weight: bold;
+  color: #6dab1b;
+  margin-bottom: 10px;
+}
+
+/* Botões de ação */
+.myRecipes-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 5px;
+}
+
+.myRecipes-actions button {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+/* Botões individuais */
+.myRecipes-view { background: #6dab1b; color: white; }
+.myRecipes-view:hover { background: #5a9617; }
+
+.myRecipes-edit { background: #f3c623; color: white; }
+.myRecipes-edit:hover { background: #d9ab20; }
+
+.myRecipes-delete { background: #ed5565; color: white; }
+.myRecipes-delete:hover { background: #d84c53; }
+
+/* Mensagem de lista vazia */
+.myRecipes-empty {
+  font-size: 16px;
+  color: #666;
+  margin-top: 20px;
+}
+
+/* Página de Edição de Receita */
+.editRecipe-wrapper {
+  max-width: 500px;
+  padding: 30px;
+  text-align: center;
+}
+
+/* Inputs de edição */
+.editRecipe-input {
+  width: 96%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+/* Botões da página de edição */
+.editRecipe-button {
+  width: 100%;
+  padding: 10px;
+  background: #6dab1b; /* Verde */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background 0.3s ease-in-out;
+}
+
+.editRecipe-button:hover {
+  background: #5a9617;
+}
+
+.editRecipe-button.cancel {
+  background: #ed5565;
+}
+
+.editRecipe-button.cancel:hover {
+  background: #d84c53;
+}
+
+/* Checkout Page */
+/* Página de Confirmação de Compra */
+.checkout-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f4ffe6;
+}
+
+.checkout-wrapper {
+  max-width: 500px;
+  padding: 30px;
+  text-align: center;
+  background: #fafff2;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.checkout-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #ed5565;
+}
+
+.checkout-text {
+  font-size: 16px;
+  color: #666;
+  margin: 15px 0;
+}
+
+.checkout-recipeName {
+  font-size: 20px;
+  font-weight: bold;
+  color: #6dab1b;
+  margin-bottom: 10px;
+}
+
+/* Caixa de chave PIX */
+.checkout-pixKey {
+  width: 100%;
+  height: 60px;
+  padding: 10px;
+  font-size: 14px;
+  text-align: center;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background: white;
+  cursor: pointer;
+}
+
+.checkout-pixKey:focus {
+  outline: 2px solid #6dab1b;
+}
+
+/* Mensagens de status */
+.checkout-wait {
+  font-size: 16px;
+  color: #ed5565;
+  font-weight: bold;
+}
+
+.checkout-confirmed {
+  font-size: 18px;
+  color: #6dab1b;
+  font-weight: bold;
+}
+
+.checkout-loading {
+  font-size: 16px;
+  color: #666;
+}
+
+
