@@ -154,6 +154,11 @@ body {
   gap: 12px;
   margin-bottom: 20px;
 }
+.homePagecategory-button.all {
+  background-color:#ed5565 ;
+  color: #fde9ea;
+}
+
 
 .homePagecategory-buttons button {
   padding: 10px 20px;
@@ -165,11 +170,12 @@ body {
   transition: all 0.3s ease-in-out;
   box-shadow: 1px 1px 2px #a7c87c;
   color: #ed5565;
-  background-color: #fdf0f1;
+  background-color: #fde9ea;
 }
 
 .homePagecategory-buttons button:hover {
-  transform: scale(1.05);
+  transform: scale(1.08);
+  
 }
 
 .cart-container {
@@ -859,6 +865,13 @@ sellPage-input, .sellPage-textarea, .sellPage-button, .sellPage-select {
   cursor: pointer;
   font-size: 14px;
   font-weight: bold;
+}
+
+.myRecipes-topCategory {
+  font-size: 18px; 
+  
+  color: #ed5565; /* Cor verde (altere para a cor desejada) */
+  margin-bottom: 10px;
 }
 
 /* Botões individuais */
