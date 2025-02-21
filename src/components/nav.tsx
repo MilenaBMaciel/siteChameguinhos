@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faShoppingCart, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faUser } from "@fortawesome/free-solid-svg-icons";
 
 const Nav: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(localStorage.getItem('isLoggedIn') === 'true');
@@ -28,9 +28,6 @@ const Nav: React.FC = () => {
         <div className="nav-right">
           <Link to={isLoggedIn ? "/profile" : "/login"} className="profile-icon" aria-label="Perfil">
             <FontAwesomeIcon icon={faUser} />
-          </Link>
-          <Link to="/cart" className="cart-icon" aria-label="Carrinho">
-            <FontAwesomeIcon icon={faShoppingCart} />
           </Link>
         </div>
       </div>

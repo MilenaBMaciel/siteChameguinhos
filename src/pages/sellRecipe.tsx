@@ -11,8 +11,11 @@ const SellRecipe = () => {
   const [pdfUrl, setPdfUrl] = useState("");
   const [message, setMessage] = useState("");
 
-  // ✅ Gera um ID único para a nova receita
-  const generateUniqueID = () => Math.floor(Date.now() / 1000);
+  const categoryMap: { [key: string]: number } = {
+    "Amigurumi": 1,
+    "Roupas": 2,
+    "Decoração": 3,
+  };
 
   const handleUpload = async () => {
     if (!imageUrl || !pdfUrl || !name || !description || !price || !category) {
@@ -20,27 +23,34 @@ const SellRecipe = () => {
       return;
     }
 
+    const id_vendedor = localStorage.getItem("userId");
+
+    if (!id_vendedor) {
+      setMessage("Erro: usuário não autenticado.");
+      return;
+    }
+
     const recipeData = {
-      id: generateUniqueID(),
-      name,
-      description,
-      price,
-      category,
+      id_vendedor: parseInt(id_vendedor, 10),
+      titulo: name,
+      descricao: description,
+      valor: parseFloat(price),
+      id_categoria: categoryMap[category] || 0,
       imageUrl,
       pdfUrl,
     };
 
     try {
-      // ✅ CONEXÃO COM O BACKEND: Substituir pela URL real do backend
-      const response = await fetch("http://localhost:5000/upload", {
+      const response = await fetch("http://localhost:3000/cadastrar-receita", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(recipeData),
       });
 
       if (response.ok) {
+        const data = await response.json();
         setMessage("Receita enviada com sucesso!");
-        setTimeout(() => navigate(`/fullRecipe/${recipeData.id}`), 2000);
+        setTimeout(() => navigate(`/fullRecipe/${data.id}`), 2000);
       } else {
         setMessage("Erro ao enviar receita.");
       }
@@ -53,7 +63,7 @@ const SellRecipe = () => {
   return (
     <div className="sellPage-container">
       <div className="sellPage-wrapper">
-        <h2 className="sellPage-title">Vender Nova Receita</h2>
+        <h2 className="sellPage-title">Nova Receita</h2>
 
         <input
           type="text"
@@ -63,7 +73,7 @@ const SellRecipe = () => {
           className="sellPage-input"
         />
 
-        <input
+        <textarea
           placeholder="Descrição da Receita"
           value={description}
           onChange={(e) => setDescription(e.target.value)}

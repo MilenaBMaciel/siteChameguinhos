@@ -1,51 +1,70 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 
 const Checkout = () => {
-  const { id } = useParams(); // Obtém o ID da receita da URL
+  const { id } = useParams();
   const navigate = useNavigate();
-  const [recipe, setRecipe] = useState<{ id: number; name: string } | null>(null);
+  const location = useLocation();
+
+  // Pegamos os dados da receita da tela anterior
+  const recipe = location.state?.recipe || null;
+
   const [pixKey] = useState("00020126360014BR.GOV.BCB.PIX0114+5511999999995204000053039865802BR5925Nome Exemplo6009Sao Paulo62070503***6304ABCD");
-  const [purchaseConfirmed, setPurchaseConfirmed] = useState(false);
+  const [showInvoicePopup, setShowInvoicePopup] = useState(false);
+  const [invoiceData, setInvoiceData] = useState<any>(null);
+  const [loadingInvoice, setLoadingInvoice] = useState(false);
 
-  // ✅ SIMULAÇÃO DE DADOS (remover após conectar ao backend)
   useEffect(() => {
-    // FUTURA CONEXÃO COM O BACKEND: Buscar dados da receita pelo ID
-    // fetch(`http://localhost:5000/recipe/${id}`)
-    //   .then(response => response.json())
-    //   .then(data => setRecipe(data))
-    //   .catch(error => console.error("Erro ao carregar a receita:", error));
+    if (!recipe) {
+      navigate(`/receita/${id}`);
+    }
+  }, [recipe, id, navigate]);
 
-    // 🔹 Simulação de carregamento da receita
-    setTimeout(() => {
-      setRecipe({ id: Number(id), name: "Receita Simulada" }); // Substituir por dados do backend
-    }, 1000); // Simula atraso na resposta da API
-  }, [id]);
-
-  // ✅ SIMULAÇÃO DE CONFIRMAÇÃO DE COMPRA (remover após conectar ao backend)
+  // Exibir popup da fatura ao pressionar qualquer tecla
   useEffect(() => {
-    const confirmPurchase = (event: KeyboardEvent) => {
-      if (!purchaseConfirmed) {
-        setPurchaseConfirmed(true);
-        
-        // FUTURA CONEXÃO COM O BACKEND: Registrar a compra no banco de dados
-        // fetch("http://localhost:5000/confirm-purchase", {
-        //   method: "POST",
-        //   headers: { "Content-Type": "application/json" },
-        //   body: JSON.stringify({ recipeId: id, userId: "123" }), // ❗ Enviar ID real do usuário
-        // });
+    const handlePayment = async () => {
+      setLoadingInvoice(true);
+      try {
+        // Finaliza o pagamento no backend
+        await fetch("http://localhost:3000/finalizar-pagamento", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            id_usuario: localStorage.getItem("userId"),
+            id_receita: id,
+            metodo: "Pix", // Simulação
+            parcelas: 1,
+          }),
+        });
 
-        // 🔹 Simulação de confirmação da compra
-        setTimeout(() => navigate("/profile"), 2000);
+        // Busca a fatura atualizada
+        const response = await fetch(`http://localhost:3000/fatura/${localStorage.getItem("userId")}/${id}`);
+        const data = await response.json();
+        if (data) {
+          setInvoiceData(data);
+          setShowInvoicePopup(true);
+        } else {
+          alert("Erro ao carregar fatura.");
+        }
+      } catch (error) {
+        console.error("Erro ao processar pagamento:", error);
+        alert("Erro ao processar pagamento.");
+      } finally {
+        setLoadingInvoice(false);
       }
     };
 
-    window.addEventListener("keydown", confirmPurchase);
-
-    return () => {
-      window.removeEventListener("keydown", confirmPurchase);
+    const handleKeyPress = () => {
+      if (!showInvoicePopup) {
+        handlePayment();
+      }
     };
-  }, [id, purchaseConfirmed, navigate]);
+
+    window.addEventListener("keydown", handleKeyPress);
+    return () => {
+      window.removeEventListener("keydown", handleKeyPress);
+    };
+  }, [id, showInvoicePopup]);
 
   return (
     <div className="checkout-container">
@@ -65,16 +84,33 @@ const Checkout = () => {
               onClick={(e) => (e.target as HTMLTextAreaElement).select()} 
             />
 
-            {!purchaseConfirmed ? (
-              <p className="checkout-wait">Pressione qualquer tecla após pagar</p>
-            ) : (
-              <p className="checkout-confirmed">Compra confirmada! Redirecionando...</p>
-            )}
+            <p className="checkout-wait">Pressione qualquer tecla após pagar</p>
           </>
         ) : (
           <p className="checkout-loading">Carregando receita...</p>
         )}
       </div>
+
+      {/* Popup da Fatura */}
+      {showInvoicePopup && invoiceData && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h2>Detalhes da Fatura</h2>
+            <p><strong>Receita:</strong> {recipe.name}</p>
+            <p><strong>Valor:</strong> R$ {recipe.price.toFixed(2)}</p>
+            <p><strong>Método de Pagamento:</strong> {invoiceData.metodo}</p>
+            <p><strong>Parcelas:</strong> {invoiceData.parcelas}</p>
+            <p><strong>Status:</strong> {invoiceData.situacao}</p>
+
+            {/* Botão para baixar o PDF da receita */}
+            <a href={recipe.pdfUrl} style={{ marginRight: "10px" }}  className="fullRecipePage-button">
+                📄 Baixar Receita
+            </a>
+
+            <button onClick={() => navigate("/profile")} className="close-button">Fechar</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

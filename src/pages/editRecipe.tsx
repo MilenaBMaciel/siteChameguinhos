@@ -5,38 +5,53 @@ const EditRecipe = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [recipe, setRecipe] = useState({
-    name: "",
-    description: "",
-    price: "",
-    category: "",
+    titulo: "",
+    descricao: "",
+    valor: "",
     imageUrl: "",
     pdfUrl: "",
   });
+  const [errorMessage, setErrorMessage] = useState("");
+  const [showErrorModal, setShowErrorModal] = useState(false);
 
-  // ✅ FUTURA CONEXÃO COM O BACKEND: Buscar dados da receita para edição
+  //Busca os dados da receita para edição
   useEffect(() => {
-    fetch(`http://localhost:5000/recipe/${id}`)
+    fetch(`http://localhost:3000/receita/${id}`)
       .then((response) => response.json())
-      .then((data) => setRecipe(data))
-      .catch((error) => console.error("Erro ao carregar a receita:", error));
+      .then((data) =>
+        setRecipe({
+          titulo: data.titulo || "",
+          descricao: data.descricao || "",
+          valor: data.valor || "",
+          imageUrl: data.imageUrl || "",
+          pdfUrl: data.pdfUrl || "",
+        })
+      )
+      .catch((error) => {
+        console.error("Erro ao carregar a receita:", error);
+        setErrorMessage("Erro ao carregar a receita.");
+        setShowErrorModal(true);
+      });
   }, [id]);
 
-  // ✅ FUTURA CONEXÃO COM O BACKEND: Atualizar receita no banco de dados
+  //Envia os dados atualizados para o backend
   const handleSave = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/update-recipe/${id}`, {
+      const response = await fetch(`http://localhost:3000/atualizar-receita/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(recipe),
       });
 
-      if (response.ok) {
-        navigate("/my-recipes");
-      } else {
-        console.error("Erro ao atualizar receita.");
+      const data = await response.json();
+      if (!data.success) {
+        throw new Error(data.message);
       }
-    } catch (error) {
-      console.error("Erro ao conectar com o servidor:", error);
+
+      navigate("/myRecipes");
+    } catch (error: any) {
+      setErrorMessage(error.message || "Erro ao atualizar a receita.");
+      setShowErrorModal(true);
     }
   };
 
@@ -45,15 +60,65 @@ const EditRecipe = () => {
       <div className="editRecipe-wrapper">
         <h2 className="editRecipe-title">Editar Receita</h2>
 
-        <input type="text" placeholder="Nome" value={recipe.name} onChange={(e) => setRecipe({ ...recipe, name: e.target.value })} className="editRecipe-input" />
-        <textarea placeholder="Descrição" value={recipe.description} onChange={(e) => setRecipe({ ...recipe, description: e.target.value })} className="editRecipe-input" />
-        <input type="text" placeholder="Preço (R$)" value={recipe.price} onChange={(e) => setRecipe({ ...recipe, price: e.target.value })} className="editRecipe-input" />
-        <input type="text" placeholder="Imagem (URL)" value={recipe.imageUrl} onChange={(e) => setRecipe({ ...recipe, imageUrl: e.target.value })} className="editRecipe-input" />
-        <input type="text" placeholder="PDF (URL)" value={recipe.pdfUrl} onChange={(e) => setRecipe({ ...recipe, pdfUrl: e.target.value })} className="editRecipe-input" />
+        <input
+          type="text"
+          placeholder="Título"
+          value={recipe.titulo}
+          readOnly //O título não pode ser alterado
+          className="editRecipe-input readonly"
+        />
 
-        <button onClick={handleSave} className="editRecipe-button">Salvar</button>
-        <button onClick={() => navigate("/my-recipes")} className="editRecipe-button cancel">Cancelar</button>
+        <textarea
+          placeholder="Descrição"
+          value={recipe.descricao}
+          onChange={(e) => setRecipe({ ...recipe, descricao: e.target.value })}
+          className="editRecipe-input"
+        />
+
+        <input
+          type="text"
+          placeholder="Preço (R$)"
+          value={recipe.valor}
+          onChange={(e) => setRecipe({ ...recipe, valor: e.target.value })}
+          className="editRecipe-input"
+        />
+
+        <input
+          type="text"
+          placeholder="Imagem (URL)"
+          value={recipe.imageUrl}
+          onChange={(e) => setRecipe({ ...recipe, imageUrl: e.target.value })}
+          className="editRecipe-input"
+        />
+
+        <input
+          type="text"
+          placeholder="PDF (URL)"
+          value={recipe.pdfUrl}
+          onChange={(e) => setRecipe({ ...recipe, pdfUrl: e.target.value })}
+          className="editRecipe-input"
+        />
+
+        <button onClick={handleSave} className="editRecipe-button" style={{ marginTop: "20px", marginBottom:"10px"}}>
+          Salvar
+        </button>
+        <button onClick={() => navigate("/myRecipes")} className="editRecipe-button cancel">
+          Cancelar
+        </button>
       </div>
+
+      {/*Modal de erro */}
+      {showErrorModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h2>Erro</h2>
+            <p>{errorMessage}</p>
+            <button onClick={() => setShowErrorModal(false)} className="close-button">
+              Fechar
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
