@@ -5,7 +5,6 @@ import LoginPage from './pages/login';
 import RecipePage from './pages/recipePage';
 import ProfilePage from './pages/profile';
 import Layout from './components/layout';
-import CartPage from './pages/cart';
 import RegisterPage from './pages/register';
 import SellRecipe from './pages/sellRecipe';
 import FullRecipePage from './pages/fullRecipePage';
@@ -22,13 +21,12 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/recipe/:id" element={<RecipePage />} />
-          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/checkout/:id" element={<Checkout />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="myRecipes" element={<MyRecipes />} />
           <Route path="editRecipe/:id" element={<EditRecipe />} />
           <Route path="/sellRecipe" element={<SellRecipe />} />
           <Route path="/fullRecipe/:id" element={<FullRecipePage />} />
-          <Route path="/cart" element={<CartPage />} />
         </Routes>
       </Layout>
     </Router>

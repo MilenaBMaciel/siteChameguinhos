@@ -7,30 +7,75 @@ interface Recipe {
   imageUrl: string;
   price: number;
   category: string;
+  pdfUrl: string;
 }
 
 const MyRecipes = () => {
   const navigate = useNavigate();
   const [recipes, setRecipes] = useState<Recipe[]>([]);
+  const [topCategory, setTopCategory] = useState<string>("Carregando...");
 
-  // ✅ FUTURA CONEXÃO COM O BACKEND: Buscar receitas do usuário autenticado
+  const userId = localStorage.getItem("userId"); // Obtendo ID do usuário autenticado
+
   useEffect(() => {
-    fetch("http://localhost:5000/my-recipes") // ❗ Substituir pela API real do backend
-      .then((response) => response.json())
-      .then((data) => setRecipes(data))
-      .catch((error) => console.error("Erro ao carregar receitas:", error));
-  }, []);
+    if (!userId) {
+      navigate("/login"); // Redireciona para login se não houver usuário autenticado
+      return;
+    }
 
-  // ✅ FUTURA CONEXÃO COM O BACKEND: Excluir receita do banco de dados
+    fetchUserRecipes(userId);
+    fetchTopCategory(userId);
+  }, [userId]);
+
+  // Função para buscar as receitas do usuário autenticado
+  const fetchUserRecipes = async (userId: string) => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/receitas-vendedor/${userId}`);
+      if (!response.ok) {
+        throw new Error("Erro ao buscar receitas.");
+      }
+      const data = await response.json();
+
+      const formattedData = data.map((recipe: any) => ({
+        id: recipe.id_receita,
+        name: recipe.titulo,
+        imageUrl: recipe.imageUrl || "/default-image.jpg",
+        price: parseFloat(recipe.valor),
+        category: recipe.categoria || "Desconhecido",
+      }));
+
+      setRecipes(formattedData);
+    } catch (error) {
+      console.error("Erro ao carregar receitas:", error);
+    }
+  };
+
+  // Função para buscar a categoria mais vendida do usuário
+  const fetchTopCategory = async (userId: string) => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/categoria-vendedor/${userId}`);      if (!response.ok) {
+        throw new Error("Erro ao buscar categoria mais vendida.");
+      }
+      const data = await response.json();
+      setTopCategory(data[0]?.nome || "Nenhuma categoria vendida ainda.");
+    } catch (error) {
+      console.error("Erro ao buscar categoria mais vendida:", error);
+      setTopCategory("Erro ao carregar.");
+    }
+  };
+
+  // Função para deletar receita
   const handleDelete = async (id: number) => {
     if (window.confirm("Tem certeza que deseja excluir esta receita?")) {
       try {
-        const response = await fetch(`http://localhost:5000/delete-recipe/${id}`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/deletar-receita/${id}`, {
           method: "DELETE",
         });
 
         if (response.ok) {
-          setRecipes(recipes.filter((recipe) => recipe.id !== id));
+          const updatedRecipes = recipes.filter((recipe) => recipe.id !== id);
+          setRecipes(updatedRecipes);
+          fetchTopCategory(userId!); // Atualiza a categoria mais vendida
         } else {
           console.error("Erro ao excluir receita.");
         }
@@ -45,6 +90,11 @@ const MyRecipes = () => {
       <div className="myRecipes-wrapper">
         <h1 className="myRecipes-title">Minhas Receitas</h1>
 
+        {/*Exibe a categoria mais vendida */}
+        <p className="myRecipes-topCategory">
+          📌 Categoria mais vendida: <strong>{topCategory}</strong>
+        </p>
+
         {/* Botão para adicionar nova receita */}
         <button onClick={() => navigate("/sellRecipe")} className="myRecipes-button">
           Criar Nova Receita
@@ -57,15 +107,22 @@ const MyRecipes = () => {
               <div key={recipe.id} className="myRecipes-card">
                 <img src={recipe.imageUrl} alt={recipe.name} className="myRecipes-image" />
                 <h3 className="myRecipes-name">{recipe.name}</h3>
-                <p className="myRecipes-category">Categoria: {recipe.category}</p>
-                <p className="myRecipes-price">Preço: R${recipe.price.toFixed(2)}</p>
+
+                {/*Categoria da receita cadastrada */}
+                <p className="myRecipes-category">
+                  <strong>Categoria:</strong> {recipe.category}
+                </p>
+
+                <p className="myRecipes-price">
+                  <strong>Preço:</strong> R${recipe.price.toFixed(2)}
+                </p>
 
                 {/* Botões de Ação */}
                 <div className="myRecipes-actions">
                   <button onClick={() => navigate(`/fullRecipe/${recipe.id}`)} className="myRecipes-view">
                     Visualizar
                   </button>
-                  <button onClick={() => navigate(`/editRecipe/${recipe.id}`)} className="myRecipes-edit">
+                  <button onClick={() => navigate(`/edit-recipe/${recipe.id}`)} className="myRecipes-edit">
                     Editar
                   </button>
                   <button onClick={() => handleDelete(recipe.id)} className="myRecipes-delete">

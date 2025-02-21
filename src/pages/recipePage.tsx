@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from 'react-router-dom';
-;
+import { useParams, useNavigate } from "react-router-dom";
 
 interface Recipe {
   id: number;
@@ -19,8 +18,7 @@ const RecipePage: React.FC = () => {
   const navigate = useNavigate();  
 
   useEffect(() => {
-    // ✅ FUTURO BACKEND: Buscar a receita pelo ID diretamente da API
-    fetch('/recipes.json') // Substituir por: fetch(`https://sua-api.com/recipes/${id}`)
+    fetch(`http://localhost:3000/receita/${id}`)
       .then(response => {
         if (!response.ok) {
           throw new Error("Erro ao carregar a receita.");
@@ -28,35 +26,50 @@ const RecipePage: React.FC = () => {
         return response.json();
       })
       .then(data => {
-        const recipeData = data.find((item: Recipe) => item.id.toString() === id);
-        setRecipe(recipeData || null);
+        setRecipe({
+          id: data.id_receita,
+          name: data.titulo,
+          imageUrl: data.imageUrl || "/default-image.jpg",
+          description: data.descricao || "Sem descrição",
+          price: parseFloat(data.valor),
+          category: data.categoria
+        });
       })
       .catch(error => console.error('Erro ao carregar a receita:', error));
-
-    // Atualiza o estado quando o evento de autenticação for disparado
-    const updateAuthStatus = () => {
-      setIsLoggedIn(localStorage.getItem('isLoggedIn') === 'true');
-    };
-
-    window.addEventListener("authChange", updateAuthStatus);
-
-    return () => {
-      window.removeEventListener("authChange", updateAuthStatus);
-    };
   }, [id]);
 
   const handlePurchase = () => {
-    if (isLoggedIn) {
-      // ✅ FUTURO BACKEND: Criar uma requisição para iniciar a compra
-      console.log(`Usuário autenticado! Iniciando compra da receita ID: ${id}`);
-      navigate('/checkout');  
-    } else {
-      setShowLoginMessage(true);  
-    }
-  };
+    const userId = localStorage.getItem("userId");
 
-  const closeModal = () => {
-    setShowLoginMessage(false);
+    if (!isLoggedIn || !userId) {
+      setShowLoginMessage(true);
+      return;
+    }
+
+    //Criar a compra no banco de dados
+    fetch("http://localhost:3000/comprar-receita", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        id_usuario: userId,
+        id_receita: id,
+        metodo: "Pix", // Simulação de pagamento
+        parcelas: 1
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        //Redireciona para o Checkout passando os dados da receita
+        navigate(`/checkout/${id}`, { state: { recipe } });
+      } else {
+        alert(data.error || "Erro ao processar a compra.");
+      }
+    })
+    .catch(error => {
+      console.error("Erro ao processar a compra:", error);
+      alert("Erro ao processar a compra.");
+    });
   };
 
   return (
@@ -64,16 +77,12 @@ const RecipePage: React.FC = () => {
       {recipe ? (
         <div className="recipePage-container">
           <h1 className="recipePage-title">{recipe.name}</h1>
-          <img
-            src={recipe.imageUrl}
-            alt={recipe.name}
-            className="recipePage-image"
-          />
+          <img src={recipe.imageUrl} alt={recipe.name} className="recipePage-image" />
           <p className="recipePage-description">{recipe.description}</p>
-          <p className="recipePage-category">{recipe.category}</p>
+          <p className="recipePage-category">Categoria: {recipe.category}</p>
           <p className="recipePage-price">Preço: R${recipe.price.toFixed(2)}</p>
 
-          {/* ✅ FUTURO BACKEND: Confirmar compra no servidor */}
+          {/* Botão de compra */}
           <button onClick={handlePurchase} className="buy-button">
             Comprar
           </button>
@@ -87,7 +96,7 @@ const RecipePage: React.FC = () => {
           <div className="modal-content">
             <h2>Você precisa estar logado para comprar</h2>
             <p>Por favor, faça login para continuar.</p>
-            <button onClick={closeModal} className="close-button">Fechar</button>
+            <button onClick={() => setShowLoginMessage(false)} className="close-button">Fechar</button>
           </div>
         </div>
       )}

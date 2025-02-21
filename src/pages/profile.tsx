@@ -1,44 +1,83 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-// import "../index.css"; // Mantendo o CSS global do site
 
 interface Recipe {
   id: number;
   name: string;
   imageUrl: string;
   price: number;
-  pdfUrl: string; // ✅ Agora cada receita tem um link para o PDF
+  pdfUrl: string;
+}
+
+interface Invoice {
+  metodo: string;
+  parcelas: number;
+  situacao: string;
 }
 
 const ProfilePage: React.FC = () => {
   const navigate = useNavigate();
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(localStorage.getItem("isLoggedIn") === "true");
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(
+    localStorage.getItem("isLoggedIn") === "true"
+  );
   const [purchasedRecipes, setPurchasedRecipes] = useState<Recipe[]>([]);
+  const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
+  const [invoiceData, setInvoiceData] = useState<Invoice | null>(null);
+  const [showInvoicePopup, setShowInvoicePopup] = useState(false);
+  const [loadingInvoice, setLoadingInvoice] = useState(false);
 
   useEffect(() => {
-    if (!isLoggedIn) {
-      navigate("/login"); // Redireciona se o usuário não estiver logado
+    const userId = localStorage.getItem("userId");
+
+    if (!isLoggedIn || !userId) {
+      navigate("/login");
+      return;
     }
 
-    // ✅ FUTURO BACKEND: Buscar receitas adquiridas pelo usuário autenticado
-    fetch("/recipes.json") // Substituir por: fetch("https://sua-api.com/user/recipes")
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Erro ao carregar as receitas adquiridas.");
-        }
-        return response.json();
-      })
+    fetch(`http://localhost:3000/compras/${userId}`)
+      .then((response) => response.json())
       .then((data) => {
-        setPurchasedRecipes(data);
+        const formattedRecipes = data.map((item: any) => ({
+          id: item.id_receita,
+          name: item.titulo,
+          imageUrl: item.imageUrl || "/default-image.jpg",
+          price: parseFloat(item.valor),
+          pdfUrl: item.pdfUrl || "#",
+        }));
+        setPurchasedRecipes(formattedRecipes);
       })
       .catch((error) => console.error("Erro ao carregar receitas:", error));
   }, [isLoggedIn, navigate]);
 
+  // Função para buscar fatura ao clicar na receita
+  const handleShowInvoice = async (recipe: Recipe) => {
+    setLoadingInvoice(true);
+    setSelectedRecipe(recipe);
+    try {
+      const userId = localStorage.getItem("userId");
+      const response = await fetch(`http://localhost:3000/fatura/${userId}/${recipe.id}`);
+      const data = await response.json();
+      if (data) {
+        setInvoiceData(data);
+        setShowInvoicePopup(true);
+      } else {
+        alert("Erro ao carregar fatura.");
+      }
+    } catch (error) {
+      console.error("Erro ao buscar fatura:", error);
+      alert("Erro ao buscar fatura.");
+    } finally {
+      setLoadingInvoice(false);
+    }
+  };
+
+  // Função para deslogar
   const handleLogout = () => {
-    // ✅ FUTURO BACKEND: Informar ao servidor que o usuário está deslogando (opcional)
+    localStorage.removeItem("userId");
+    localStorage.removeItem("userName");
     localStorage.removeItem("isLoggedIn");
-    window.dispatchEvent(new Event("authChange")); // Atualiza a autenticação globalmente
-    navigate("/login"); // Redireciona para a página de login
+    window.dispatchEvent(new Event("authChange"));
+    navigate("/login");
   };
 
   return (
@@ -61,22 +100,41 @@ const ProfilePage: React.FC = () => {
         <div className="profilePage-recipes">
           {purchasedRecipes.length > 0 ? (
             purchasedRecipes.map((recipe) => (
-              <a 
+              <div 
                 key={recipe.id} 
-                href={recipe.pdfUrl} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="profilePage-recipeCard"
+                className="profilePage-recipeCard" 
+                onClick={() => handleShowInvoice(recipe)}
               >
                 <img src={recipe.imageUrl} alt={recipe.name} className="profilePage-recipeImage" />
                 <h3 className="profilePage-recipeName">{recipe.name}</h3>
-              </a>
+              </div>
             ))
           ) : (
             <p className="profilePage-noRecipes">Nenhuma receita adquirida ainda.</p>
           )}
         </div>
       </div>
+
+      {/* Modal da Fatura */}
+      {showInvoicePopup && selectedRecipe && invoiceData && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h2>Detalhes da Fatura</h2>
+            <p><strong>Receita:</strong> {selectedRecipe.name}</p>
+            <p><strong>Valor:</strong> R$ {selectedRecipe.price.toFixed(2)}</p>
+            <p><strong>Método de Pagamento:</strong> {invoiceData.metodo}</p>
+            <p><strong>Parcelas:</strong> {invoiceData.parcelas}</p>
+            <p><strong>Status:</strong> {invoiceData.situacao}</p>
+
+            {/* Botão para baixar a receita */}
+            <a href={selectedRecipe.pdfUrl} style={{ marginRight: "10px" }}  className="fullRecipePage-button">
+                📄 Baixar Receita
+            </a>
+
+            <button onClick={() => setShowInvoicePopup(false)} className="close-button">Fechar</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

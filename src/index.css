@@ -154,6 +154,11 @@ body {
   gap: 12px;
   margin-bottom: 20px;
 }
+.homePagecategory-button.all {
+  background-color:#ed5565 ;
+  color: #fde9ea;
+}
+
 
 .homePagecategory-buttons button {
   padding: 10px 20px;
@@ -165,11 +170,12 @@ body {
   transition: all 0.3s ease-in-out;
   box-shadow: 1px 1px 2px #a7c87c;
   color: #ed5565;
-  background-color: #fdf0f1;
+  background-color: #fde9ea;
 }
 
 .homePagecategory-buttons button:hover {
-  transform: scale(1.05);
+  transform: scale(1.08);
+  
 }
 
 .cart-container {
@@ -748,15 +754,17 @@ sellPage-input, .sellPage-textarea, .sellPage-button, .sellPage-select {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background-color: #f4ffe6; /* Cor de fundo igual à HomePage */
+  background-color: #f4ffe6;
+  padding: 20px; /* Adiciona um espaço nas laterais */
 }
 
 /* Caixa de conteúdo */
 .myRecipes-wrapper, .editRecipe-wrapper {
-  max-width: 600px;
-  padding: 30px;
+  max-width: 600px; /* Aumenta a largura */
+  width: 90%; /* Garante responsividade */
+  padding: 40px; /* Mais espaço interno */
   text-align: center;
-  background: #fafff2; /* Cor de fundo igual ao formulário de venda */
+  background: #fafff2;
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
@@ -859,6 +867,13 @@ sellPage-input, .sellPage-textarea, .sellPage-button, .sellPage-select {
   cursor: pointer;
   font-size: 14px;
   font-weight: bold;
+}
+
+.myRecipes-topCategory {
+  font-size: 18px; 
+  
+  color: #ed5565; /* Cor verde (altere para a cor desejada) */
+  margin-bottom: 10px;
 }
 
 /* Botões individuais */
@@ -992,4 +1007,171 @@ sellPage-input, .sellPage-textarea, .sellPage-button, .sellPage-select {
   color: #666;
 }
 
+/* Tela de criar conta */
+.registerPage-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f4ffe6;
+}
 
+.registerPage-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.registerPage-box {
+  background: #fafff2;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.registerPage-title {
+  font-size: 1.8rem;
+  margin-bottom: 10px;
+}
+
+.registerPage-orText {
+  color: #666;
+  margin-bottom: 15px;
+}
+
+.registerPage-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.registerPage-input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+}
+
+.registerPage-button {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 10px;
+  font-size: 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.registerPage-button:hover {
+  background-color: #218838;
+}
+
+.registerPage-registerText {
+  margin-top: 15px;
+  font-size: 0.9rem;
+}
+
+.registerPage-registerLink {
+  color: #007bff;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.registerPage-registerLink:hover {
+  text-decoration: underline;
+}
+
+/* Modal */
+.registerPage-modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.registerPage-modalContent {
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  width: 90%;
+  max-width: 00px;
+  text-align: center;
+}
+
+.registerPage-closeButton {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 10px;
+  font-size: 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.registerPage-closeButton:hover {
+  background-color: #c82333;
+}
+
+/* Tela de erros */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  width: 400px;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.close-button {
+  background: #d9534f;
+  color: white;
+  padding: 10px 20px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.readonly {
+  background-color: #e0e0e0; /* Cinza claro */
+  color: #6c757d; /* Texto cinza escuro */
+  cursor: not-allowed;
+}

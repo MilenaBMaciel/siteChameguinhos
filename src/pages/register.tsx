@@ -1,95 +1,67 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-//import "./RegisterPage.css"; // Mantendo seu CSS externo padrão
+import ErrorModal from "./errorModal"; // Importa o modal genérico
 
 const RegisterPage = () => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [nome, setNome] = useState("");
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
+  const [confirmSenha, setConfirmSenha] = useState("");
+  const [chavePix, setChavePix] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
-  const [showErrorModal, setShowErrorModal] = useState<boolean>(false);
   const navigate = useNavigate();
 
-  const handleRegister = () => {
-    // 🚀 FUTURO BACKEND: Verificar se as senhas coincidem antes de enviar ao servidor
-    if (password !== confirmPassword) {
+  const handleRegister = async () => {
+    if (senha !== confirmSenha) {
       setErrorMessage("As senhas não coincidem.");
-      setShowErrorModal(true);
       return;
     }
 
-    // 🚀 FUTURO BACKEND: Enviar os dados para um backend para criação do usuário
-    // Aqui simularíamos uma chamada à API de registro, substitua por um `fetch` no futuro
-    console.log("Usuário criado:", { username, password });
+    try {
+      const response = await fetch("http://localhost:3000/usuarios", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nome, email, senha, chave_pix: chavePix || null }),
+      });
 
-    // Simulando um registro bem-sucedido
-    setSuccessMessage("Conta criada com sucesso! Redirecionando...");
-    
-    // 🚀 FUTURO BACKEND: Se o backend confirmar sucesso, então redirecionar
-    setTimeout(() => {
-      navigate("/login"); // Redirecionar para a página de login
-    }, 2000);
+      const data = await response.json();
+
+      if (!data.success) {
+        throw new Error(data.message || "Erro ao criar conta.");
+      }
+
+      setSuccessMessage("Conta criada com sucesso! Redirecionando...");
+      setTimeout(() => navigate("/login"), 2000);
+    } catch (error: any) {
+      setErrorMessage(error.message);
+    }
   };
 
   return (
-    <div className="loginPage-container">
-      <div className="loginPage-wrapper">
-        <div className="loginPage-box">
-          <h2 className="loginPage-title">Criar Conta</h2>
+    <div className="registerPage-container">
+      <div className="registerPage-wrapper">
+        <div className="registerPage-box">
+          <h2 className="registerPage-title">Criar Conta</h2>
+          <p className="registerPage-orText">Preencha seus dados para se cadastrar</p>
 
-          <p className="loginPage-orText">Preencha seus dados para se cadastrar</p>
+          <form className="registerPage-form">
+            <input type="text" placeholder="Nome Completo" value={nome} onChange={(e) => setNome(e.target.value)} className="registerPage-input" />
+            <input type="email" placeholder="E-mail" value={email} onChange={(e) => setEmail(e.target.value)} className="registerPage-input" />
+            <input type="password" placeholder="Senha" value={senha} onChange={(e) => setSenha(e.target.value)} className="registerPage-input" />
+            <input type="password" placeholder="Confirmar Senha" value={confirmSenha} onChange={(e) => setConfirmSenha(e.target.value)} className="registerPage-input" />
+            <input type="text" placeholder="Chave Pix (Opcional)" value={chavePix} onChange={(e) => setChavePix(e.target.value)} className="registerPage-input" />
 
-          <form className="loginPage-form">
-            <input
-              type="text"
-              placeholder="Usuário"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="loginPage-input"
-            />
-
-            <input
-              type="password"
-              placeholder="Senha"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="loginPage-input"
-            />
-
-            <input
-              type="password"
-              placeholder="Confirmar Senha"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              className="loginPage-input"
-            />
-
-            <button type="button" onClick={handleRegister} className="loginPage-button">
-              Criar Conta
-            </button>
+            <button type="button" onClick={handleRegister} className="registerPage-button">Criar Conta</button>
           </form>
 
-          {successMessage && <p className="loginPage-success">{successMessage}</p>}
+          {successMessage && <p className="registerPage-success">{successMessage}</p>}
 
-          {showErrorModal && (
-            <div className="loginPage-modalOverlay">
-              <div className="loginPage-modalContent">
-                <h2>Erro</h2>
-                <p>{errorMessage}</p>
-                <button onClick={() => setShowErrorModal(false)} className="loginPage-closeButton">
-                  Fechar
-                </button>
-              </div>
-            </div>
-          )}
+          {/* Exibe o modal se houver um erro */}
+          <ErrorModal message={errorMessage} onClose={() => setErrorMessage("")} />
 
-          {/* Link para login caso o usuário já tenha conta */}
-          <p className="loginPage-registerText">
-            Já tem uma conta?{" "}
-            <a href="/login" className="loginPage-registerLink">
-              Faça login
-            </a>
+          <p className="registerPage-registerText">
+            Já tem uma conta? <a href="/login" className="registerPage-registerLink">Faça login</a>
           </p>
         </div>
       </div>

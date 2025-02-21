@@ -1,51 +1,63 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-//import "./LoginPage.css"; // Descomente quando houver um arquivo CSS
 
 const LoginPage = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(
+    localStorage.getItem("isLoggedIn") === "true"
+  );
   const [errorMessage, setErrorMessage] = useState("");
   const [showErrorModal, setShowErrorModal] = useState<boolean>(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // ✅ FUTURO BACKEND: Verificar se o usuário já está logado através de um token JWT no localStorage
-    const loggedInStatus = localStorage.getItem("isLoggedIn") === "true";
-    setIsLoggedIn(loggedInStatus);
-  }, []);
+    console.log("Verificando login inicial:", isLoggedIn);
+    if (isLoggedIn) {
+      console.log("Usuário já logado, redirecionando para o perfil...");
+      navigate("/profile");
+    }
+  }, [isLoggedIn, navigate]);
 
-  const handleLogin = () => {
-    // ✅ FUTURO BACKEND: Aqui será feita a requisição para a API de login
-    fetch("/users.json") // Substituir por `fetch("https://sua-api.com/login")`
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Erro ao carregar os usuários.");
-        }
-        return response.json();
-      })
-      .then((users) => {
-        // ✅ FUTURO BACKEND: Remover essa busca local e usar a resposta da API
-        const user = users.find(
-          (user: { username: string; password: string }) =>
-            user.username === username && user.password === password
-        );
+  const handleLogin = async () => {
+    console.log("Tentando login com:", { email, senha });
 
-        if (user) {
-          setIsLoggedIn(true);
-          localStorage.setItem("isLoggedIn", "true"); // ✅ FUTURO BACKEND: Trocar por token JWT
-          navigate("/profile"); // Redireciona para a página do usuário
-        } else {
-          setShowErrorModal(true);
-          setErrorMessage("Usuário ou senha inválidos. Tente novamente.");
-        }
-      })
-      .catch((error) => {
-        console.error("Erro ao conectar-se ao servidor:", error);
-        setShowErrorModal(true);
-        setErrorMessage("Erro ao conectar-se ao servidor.");
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, senha }),
       });
+
+      if (!response.ok) {
+        throw new Error(`Erro HTTP: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log("Resposta do backend:", data);
+
+      if (data.length > 0) {
+        const user = data[0];
+
+        console.log("Usuário encontrado:", user);
+
+        localStorage.setItem("isLoggedIn", "true");
+        localStorage.setItem("userId", user.id_usuario);
+        localStorage.setItem("userName", user.nome);
+
+        setIsLoggedIn(true); //Atualiza o estado corretamente
+        console.log("Login bem-sucedido. Redirecionando...");
+        navigate("/profile");
+      } else {
+        console.log("Nenhum usuário encontrado para essas credenciais.");
+        setErrorMessage("E-mail ou senha incorretos.");
+        setShowErrorModal(true);
+      }
+    } catch (error) {
+      console.error("Erro ao conectar-se ao servidor:", error);
+      setErrorMessage("Erro ao conectar-se ao servidor.");
+      setShowErrorModal(true);
+    }
   };
 
   return (
@@ -54,51 +66,27 @@ const LoginPage = () => {
         <div className="loginPage-box">
           <h2 className="loginPage-title">Login</h2>
 
-          <div className="loginPage-socialLogin">
-            {/* ✅ FUTURO BACKEND: Implementar login com Google OAuth */}
-            <button className="loginPage-socialButton" onClick={() => alert("Login com Google ainda não implementado.")}>
-              <span>🔵</span> Entrar com Google
-            </button>
-            
-            {/* ✅ FUTURO BACKEND: Implementar login com GitHub OAuth */}
-            <button className="loginPage-socialButton" onClick={() => alert("Login com GitHub ainda não implementado.")}>
-              <span>🐙</span> Entrar com Github
-            </button>
-          </div>
-
-          <p className="loginPage-orText">Ou faça login com seu email</p>
-
-          <form className="loginPage-form">
+          <form className="loginPage-form" onSubmit={(e) => e.preventDefault()}>
             <input
-              type="text"
-              placeholder="Usuário"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              type="email"
+              placeholder="E-mail"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className="loginPage-input"
             />
 
             <input
               type="password"
               placeholder="Senha"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              value={senha}
+              onChange={(e) => setSenha(e.target.value)}
               className="loginPage-input"
             />
 
-            <div className="loginPage-options">
-              <label>
-                <input type="checkbox" /> Manter-me conectado
-              </label>
-              <a href="#" className="loginPage-forgotPassword">Esqueceu a senha?</a>
-            </div>
-
-            {/* ✅ FUTURO BACKEND: Alterar para chamar API de autenticação */}
             <button type="button" onClick={handleLogin} className="loginPage-button">
               Entrar
             </button>
           </form>
-
-          {isLoggedIn && <p className="loginPage-success">Você está logado com sucesso!</p>}
 
           {showErrorModal && (
             <div className="loginPage-modalOverlay">
@@ -115,10 +103,14 @@ const LoginPage = () => {
           {/* Link para criação de conta */}
           <p className="loginPage-registerText">
             Ainda não tem uma conta?{" "}
-            <a href="/register" className="loginPage-registerLink">
+            <button
+              onClick={() => navigate("/register")}
+              className="loginPage-registerLink"
+            >
               Criar conta
-            </a>
+            </button>
           </p>
+
         </div>
       </div>
     </div>
