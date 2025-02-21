@@ -65,7 +65,7 @@ const MyRecipes = () => {
                   <button onClick={() => navigate(`/fullRecipe/${recipe.id}`)} className="myRecipes-view">
                     Visualizar
                   </button>
-                  <button onClick={() => navigate(`/edit-recipe/${recipe.id}`)} className="myRecipes-edit">
+                  <button onClick={() => navigate(`/editRecipe/${recipe.id}`)} className="myRecipes-edit">
                     Editar
                   </button>
                   <button onClick={() => handleDelete(recipe.id)} className="myRecipes-delete">
